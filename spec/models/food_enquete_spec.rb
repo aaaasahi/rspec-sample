@@ -38,23 +38,17 @@ RSpec.describe FoodEnquete, type: :model do
         FactoryBot.create(:food_enquete_tanaka)
       end
 
-      it '同じメールアドレスで再び回答できないこと' do
-        # [Point.3-6-2]2つ目のテストデータを作成します。
+      it '同じメールアドレスで再び回答できること' do
         re_enquete_tanaka = FactoryBot.build(:food_enquete_tanaka, food_id: 0, score: 1, present_id: 0, request: "スープがぬるかった")
-        expect(re_enquete_tanaka).not_to be_valid
-
-        # [Point.3-6-3]メールアドレスが既に存在するメッセージが含まれることを検証します。
-        expect(re_enquete_tanaka.errors[:mail]).to include(I18n.t('errors.messages.taken'))
-        expect(re_enquete_tanaka.save).to be_falsey
-        # 1件存在
-        expect(FoodEnquete.all.size).to eq 1
+        expect(re_enquete_tanaka).to be_valid
+        expect(re_enquete_tanaka.save).to be_truthy
+        expect(FoodEnquete.all.size).to eq 2
       end
+
       it '異なるメールアドレスで回答できること' do
         enquete_yamada = FactoryBot.build(:food_enquete_yamada)
-
         expect(enquete_yamada).to be_valid
         enquete_yamada.save
-        # [Point.3-6-4]問題なく登録できます。
         #2件存在
         expect(FoodEnquete.all.size).to eq 2
       end
